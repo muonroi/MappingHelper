@@ -1,6 +1,4 @@
-﻿using MappingHelper.Helper;
-
-namespace MappingHelper
+﻿namespace MappingHelper
 {
     public partial class Home : Form
     {
@@ -295,6 +293,17 @@ namespace MappingHelper
         private static string RemoveEmptyLines(string input)
         {
             return EmptyLinesPattern().Replace(input, "");
+        }
+
+        private void ProfileUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            linkLabel1.LinkVisited = true;
+            ProcessStartInfo psInfo = new()
+            {
+                FileName = "https://www.linkedin.com/in/muonroi/",
+                UseShellExecute = true
+            };
+            _ = Process.Start(psInfo);
         }
     }
 }

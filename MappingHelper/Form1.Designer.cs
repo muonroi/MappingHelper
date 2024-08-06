@@ -36,6 +36,7 @@
             btnProcess = new Button();
             rdMM = new RadioButton();
             rdPM = new RadioButton();
+            linkLabel1 = new LinkLabel();
             SuspendLayout();
             // 
             // txtSource
@@ -112,11 +113,24 @@
             rdPM.Text = "Proto - Model";
             rdPM.UseVisualStyleBackColor = true;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.LinkColor = Color.Red;
+            linkLabel1.Location = new Point(249, 674);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(273, 20);
+            linkLabel1.TabIndex = 11;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "SAY NO WITH AUTOMAPPER - MuonRoi";
+            linkLabel1.LinkClicked += ProfileUrl_LinkClicked;
+            // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(831, 703);
+            Controls.Add(linkLabel1);
             Controls.Add(rdPM);
             Controls.Add(rdMM);
             Controls.Add(btnProcess);
@@ -126,7 +140,7 @@
             Controls.Add(txtResult);
             Controls.Add(txtSource);
             Name = "Home";
-            Text = "SAY NO WITH AUTOMAPPER";
+            Text = "Mr.Maping v1.0";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -141,5 +155,6 @@
         private Button btnProcess;
         private RadioButton rdMM;
         private RadioButton rdPM;
+        private LinkLabel linkLabel1;
     }
 }
