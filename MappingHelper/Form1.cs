@@ -41,6 +41,10 @@
         [GeneratedRegex(@"public\s+(\w+)\s*\(\s*\)\s*{[^}]*}")]
         private static partial Regex ConstructorPattern();
 
+        // Pattern to remove interface implementations
+        [GeneratedRegex(@"\s*:\s*[^;{]+")]
+        private static partial Regex InterfaceImplementationPattern();
+
         private static readonly string[] NewLineSeparators = ["\n", "\r"];
 
         private static readonly string[] SpaceSeparator = [" "];
@@ -54,8 +58,8 @@
         {
             try
             {
-                string modelA = txtSource.Text;
-                string modelB = txtDestination.Text;
+                string modelA = txtSource.Text.Pipe(RemoveInterfaceImplementation);
+                string modelB = txtDestination.Text.Pipe(RemoveInterfaceImplementation);
                 string mode = rdMM.Checked ? "MM" : "PM";
                 string result = mode == "MM" ? ProcessModelToModel(modelA, modelB) : ProcessProtoToModel(modelA, modelB);
 
@@ -104,6 +108,7 @@
                 string cleanedModel = model
                     .Pipe(RemoveComments)
                     .Pipe(RemoveConstructors)
+                    .Pipe(RemoveInterfaceImplementation)
                     .Pipe(RemoveClassDeclaration)
                     .Pipe(RemoveAttribute)
                     .Pipe(RemoveAccessModifiers)
@@ -137,7 +142,7 @@
                     .Select(property => $"{property} = {classNameA}.{property}")
                     .ToList();
 
-                string mappingResult = $"{classNameB} {classNameB.ToLower()} = new {classNameB}\n{{\n    " +
+                string mappingResult = $"{classNameB} {JsonNamingPolicy.CamelCase.ConvertName(classNameB)} = new {classNameB}\n{{\n    " +
                                        string.Join(",\n    ", mapping) + "\n};";
 
                 return mappingResult;
@@ -191,7 +196,7 @@
                         };
                 }).ToList();
 
-                string mappingResult = $"{classNameModel} {classNameModel.ToLower()} = new {classNameModel}\n{{\n    " +
+                string mappingResult = $"{classNameModel} {JsonNamingPolicy.CamelCase.ConvertName(classNameModel)} = new {classNameModel}\n{{\n    " +
                                        string.Join(",\n    ", mapping) + "\n};";
 
                 return mappingResult;
@@ -244,7 +249,6 @@
                 .ToDictionary(parts => parts[1].Trim(';'), parts => parts[0]);
         }
 
-        // Các phương thức loại bỏ regex để làm sạch model và proto
         private static string RemoveComments(string input)
         {
             return CommentsPattern().Replace(input, "");
@@ -295,6 +299,12 @@
             return EmptyLinesPattern().Replace(input, "");
         }
 
+
+        private static string RemoveInterfaceImplementation(string input)
+        {
+            return InterfaceImplementationPattern().Replace(input, "");
+        }
+
         private void ProfileUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             linkLabel1.LinkVisited = true;
@@ -304,6 +314,11 @@
                 UseShellExecute = true
             };
             _ = Process.Start(psInfo);
+        }
+
+        private void BtnCoppy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(txtResult.Text);
         }
     }
 }
